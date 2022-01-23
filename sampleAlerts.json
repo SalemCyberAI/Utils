@@ -1,0 +1,9 @@
+[
+    {
+        "alert_name": "Malware Infection",
+        "host": "mac1234567",
+        "file": "scaryfile.py",
+        "file_path": "/tmp/",
+        "action": "Delete Failed"
+    }
+]
