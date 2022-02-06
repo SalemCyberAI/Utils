@@ -1,0 +1,39 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/teams/v1.9/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.9",
+  "version": "1.0.6",
+  "id": "<<Salem ID>>",
+  "developer": {
+    "name": "Salem Inc.",
+    "websiteUrl": "https://salemcyber.com",
+    "privacyUrl": "https://example.azurewebsites.net/privacy",
+    "termsOfUseUrl": "https://example.azurewebsites.net/termsofus"
+  },
+  "name": {
+    "short": "Salem Cyber Analyst"
+  },
+  "description": {
+    "short": "Salem AI cybersecurity analyst",
+    "full": "Salem is an AI powered cyber analyst designed to scale your cyber operations teams, allowing your organization to investigate a wider set of cyber threats than what's possible with a human only SOC"
+  },
+  "icons": {
+    "outline": "Salem_outline.png",
+    "color": "Salem_color.png"
+  },
+  "bots": [{
+    "botId": "<<Salem ID>>",
+    "scopes": ["team", "groupchat", "personal"],
+    "supportsFiles": true,
+    "supportsCalling": false,
+    "supportsVideo": false
+  }],
+  "permissions": ["identity", "messageTeamMembers"],
+  "devicePermissions": ["notifications"],
+  "defaultInstallScope": "groupchat",
+  "validDomains": [
+    "<<Salem Bot App Name>>.azurewebsites.net",
+    "token.botframework.com"
+  ],
+  "packageName": "net.azurewebsites.<<Salem Bot App Name>>",
+  "accentColor": "#ffffff"
+}
