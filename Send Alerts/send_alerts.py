@@ -1,3 +1,6 @@
+## Copyright 2022 Salem Inc. All rights reserved
+## Use of this code is subject to the terms of the MIT license 
+
 import json
 import sys
 import csv

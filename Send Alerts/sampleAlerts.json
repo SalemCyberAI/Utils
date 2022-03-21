@@ -6,5 +6,8 @@
         "file_path": "/tmp/",
         "action": "Delete Failed"
     },
-    "alert_name=\"Malware Blocked\" dest=wd123456 action=blocked time=\"2022-01-24 02:34:21\""
+    "alert_name=\"Malware Blocked\" dest=wd123456 action=blocked time=\"2022-01-24 02:34:21\"",
+    "alert_name=\"Data Exfiltration\" dest=scaryplace.com action=allowed src=10.0.0.1",
+    "alert_name=\"Possible webshell detected\" src=wd123456 user=jan.brag url=https://stackoverflow.com/search?q=ls+-a",
+    "alert_name=\"Brute Force Auth Attempts\" src=192.168.34.54 dest=ws12345678 user=web_svc action=failed count=123"
 ]
