@@ -5,9 +5,7 @@ import time
 import hmac
 import hashlib
 import base64
-from urllib.error import HTTPError
 import requests
-import logging
 import re
 from urllib.parse import quote, quote_plus
 
