@@ -29,7 +29,7 @@
   }],
   "permissions": ["identity", "messageTeamMembers"],
   "devicePermissions": ["notifications"],
-  "defaultInstallScope": "groupchat",
+  "defaultInstallScope": "personal",
   "validDomains": [
     "<<Salem Bot App Name>>.azurewebsites.net",
     "token.botframework.com"
