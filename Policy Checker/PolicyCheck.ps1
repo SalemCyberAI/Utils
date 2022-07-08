@@ -1,14 +1,27 @@
 param($Subscription,$ResourceGroupName,$ParameterFile,$TemplateFile)
 . .\ConvertToHash.ps1
 
+ForEach ($item in 'Subscription','ResourceGroupName','ParameterFile','TemplateFile') {
+     $input_param = Get-Variable -Name $item
+    if(-not($input_param.Value)) {
+        Write-Host "Please provide a ${item}" -ForegroundColor DarkYellow
+        return
+    }
+}
 # Set Subscription Scope
 Try {
     Set-AzContext -Subscription $Subscription -WarningAction Stop| Out-Null
 }
 Catch {
-    # Attempt to Authenticate
-    write-host "Follow pop-up prompt to login"
-    Connect-AzAccount -Subscription $Subscription | Out-Null
+    Try {
+        # Attempt to Authenticate
+        Write-Host "Follow pop-up prompt to login" -ForegroundColor DarkYellow
+        Connect-AzAccount -Subscription $Subscription | Out-Null
+    }
+    Catch {
+        Write-Host "Authenticaiton Failed" -ForegroundColor Red
+        return
+    }
 }
 
 # Collect Tempalate and Params
@@ -38,6 +51,7 @@ $MSIResource = @{
 $resources.Add($RGResource) | Out-Null
 
 # Iterate over resources
+Write-Host "Validation Started"
 $resources | ForEach-Object {
     $SingleResourceTemplate = @{
         parameters = $template.parameters
@@ -66,5 +80,3 @@ Write-Host
 Write-Host "Check Complete"
 Write-Host "Identified $n Azure Policy violations"
 Write-Host
-
-
