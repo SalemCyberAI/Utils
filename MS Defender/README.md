@@ -23,7 +23,13 @@ To implement the logic app we will use an Azure Resource Manager (ARM) template 
 
 Select the below link to deploy this Defender to Salem integration in Azure
 
-[Deploy to Azure](https://portal.azure.com/#create/Microsoft.Template)
+[Deploy to Azure](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FSalemCyberAI%2FUtils%2FMS%2520Defender%2FARM%2FmainTemplate.json)
+
+### Update Event Hub network settings
+
+The consumption plan log apps (which this is) use a fixed set of public IP addresses and you must update the network configuration of the Salem Event Hub to allow connections from these IPs.  You can find the IP ranges based on the region you deployed your logic app into, [here](https://learn.microsoft.com/en-us/connectors/common/outbound-ip-addresses)
+
+If you want to use vNet integration or private endpoints to communicate between the logic app and the Salem event hub, you need to create a standard plan logic app.  Only the standard plan apps have advanced networking features.
 
 ### Add Defender workflow automation
 
