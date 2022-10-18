@@ -14,6 +14,10 @@
                             <span>Enter Salem Event Hub Connection String:</span>
                             <input type='password' id='salem_cs'></input>
                         </div>
+                        <div class='text'>
+                            <span>Enter the index used for Salem's Output logging:</span>
+                            <input type='text' id='salem_index'></input>
+                        </div>
                         <!-- Complete Setup button will call the completeSetup() function
                              within javascript/setup_page.js -->
                         <button id='setup_button'>Complete Setup</button>

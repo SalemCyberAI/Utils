@@ -23,6 +23,7 @@ require([
         console.log("setup_page.js completeSetup called");
         // Value of password_input from setup_page_dashboard.xml
         const passwordToSave = $('#salem_cs').val();
+        const SalemIndex = $('#salem_index').val();
         let stage = 'Initializing the Splunk SDK for Javascript';
         try {
             // Initialize a Splunk Javascript SDK Service instance
@@ -35,18 +36,30 @@ require([
             stage = 'Retrieving configurations SDK collection';
             const configCollection = service.configurations(appNamespace);
             await configCollection.fetch();
-            stage = `Retrieving app.conf values for ${appName}`;
+            /*stage = `Retrieving app.conf values for ${appName}`;
             const appConfig = configCollection.item('app');
             await appConfig.fetch();
             stage = `Retrieving app.conf [install] stanza values for ${appName}`;
             const installStanza = appConfig.item('install');
-            await installStanza.fetch();
+            await installStanza.fetch();*/
+            const installStanza = await configCollection.getStanza('app', 'install')
             // Verify that app is not already configured
-            const isConfigured = installStanza.properties().is_configured;
+            const isConfigured = installStanza.is_configured;
             if (isTrue(isConfigured)) {
                 console.warn(`App is configured already (is_configured=${isConfigured}), skipping setup page...`);
                 reloadApp(service);
                 redirectToApp();
+            }
+            // Update index search if index is provided
+            if (SalemIndex) {
+                const searchConfig = configCollection.item('savedsearches');
+                await searchConfig.fetch();
+                const searchStanza = searchConfig.item('salemIndexSearch');
+                await searchStanza.fetch();
+                const search = `index=${SalemIndex} sourcetype="Salem:Alert"`
+                await searchStanza.update({
+                    search: search
+                });
             }
             // The storage passwords key = <realm>:<name>:
             stage = 'Retrieving storagePasswords SDK collection';
@@ -83,6 +96,7 @@ require([
                         password: passwordToSave,
                     }, passwordCallback);
             }
+            
         } catch (e) {
             console.warn(e);
             $('.error').show();

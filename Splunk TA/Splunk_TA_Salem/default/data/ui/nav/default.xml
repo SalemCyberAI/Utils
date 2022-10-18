@@ -1,0 +1,9 @@
+<nav color="#F1F8FE">
+    <view 
+        name="salem_cyber"
+        default="true"
+    />
+    <view
+        name="search"
+    />
+</nav>

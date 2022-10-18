@@ -1,0 +1,121 @@
+<form>
+  <label>Salem Cyber</label>
+  <description>View analysis from Salem, the AI Cyber Analyst</description>
+  <search id="common">
+    <query>|savedsearch salemIndexSearch |stats latest(incident) as status, latest(prediction) as prediction, values(context_account) as context_account, values(context_dest) as context_dest, values(context_src) as context_src by id, alert_name, report_time | eval status = case(status == 1, "Threat", status == 0, "False Positive", true(), "Not Escalated") |eval prediction_mv=json_array_to_mv(prediction), threat_liklyhood = mvindex(prediction_mv, mvcount(prediction_mv) -1), threat_level=case(threat_liklyhood &gt; .7, "High", threat_liklyhood &lt; .35, "Low", true(), "Moderate")</query>
+    <earliest>$time.earliest$</earliest>
+    <latest>$time.latest$</latest>
+  </search>
+  <fieldset submitButton="false">
+    <input type="time" token="time">
+      <label></label>
+      <default>
+        <earliest>-24h@h</earliest>
+        <latest>now</latest>
+      </default>
+    </input>
+  </fieldset>
+  <row>
+    <panel>
+      <single>
+        <title>Escalated Threats</title>
+        <search base="common">
+          <query>| where threat_level = "High" |stats count</query>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="underLabel">the number of priority threats Salem identified in this period</option>
+        <option name="useColors">0</option>
+      </single>
+    </panel>
+    <panel>
+      <single>
+        <title>Alerts Analyzed</title>
+        <search base="common">
+          <query>| stats count</query>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="rangeColors">["0x53a051","0x0877a6","0xf8be34","0xf1813f","0xdc4e41"]</option>
+        <option name="underLabel">total number of alerts analyzed by Salem in this period</option>
+      </single>
+    </panel>
+    <panel>
+      <single>
+        <title>Top Threat</title>
+        <search base="common">
+          <query>|where threat_level = "High" |top alert_name</query>
+        </search>
+        <option name="drilldown">none</option>
+        <option name="rangeColors">[#4396a9]</option>
+        <option name="refresh.display">progressbar</option>
+        <option name="underLabel">The most common alert name among threats identified by Salem</option>
+      </single>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <chart>
+        <title>Most Targeted Accounts</title>
+        <search base="common">
+          <query>|mvexpand context_account |where threat_level = "High" |where not (isnull(context_account) or context_account = "") |chart count by context_account |sort - count |head 5</query>
+        </search>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.text">Threats with this context</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.chart">bar</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.legend.placement">none</option>
+        <option name="charting.seriesColors">[#4396a9]</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+    <panel>
+      <chart>
+        <title>Most Targeted Resources</title>
+        <search base="common">
+          <query>| eval resource_context=if(context_dest = "external_resource", context_src, context_dest)
+| mvexpand resource_context |where threat_level = "High" |where not (isnull(resource_context) or resource_context = "") | where not resource_context in ("internal_resource","isHostName")|chart count by resource_context |sort - count |head 5</query>
+        </search>
+        <option name="charting.axisTitleX.visibility">collapsed</option>
+        <option name="charting.axisTitleY.text">Threats targeting resources of this class</option>
+        <option name="charting.axisTitleY.visibility">visible</option>
+        <option name="charting.chart">bar</option>
+        <option name="charting.seriesColors">[#4396a9]</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.legend.placement">none</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <chart>
+        <title>Alert Trend</title>
+        <search base="common">
+          <query>|eval _time=strptime(report_time, "%Y-%m-%dT%H:%M:%S") | timechart count as alerts_analyzed count(eval(threat_level = "High")) as escalations</query>
+        </search>
+        <option name="charting.axisTitleX.text">Threat likelihood of alerts analyzed by Salem</option>
+        <option name="charting.axisY.scale">linear</option>
+        <option name="charting.axisY2.enabled">1</option>
+        <option name="charting.chart">line</option>
+        <option name="charting.chart.overlayFields">escalations</option>
+        <option name="charting.drilldown">none</option>
+        <option name="charting.fieldColors">{"Low": "0x87ba00", "Moderate": "0xf5b900", "High": "0xe35119"}</option>
+        <option name="charting.layout.splitSeries">0</option>
+        <option name="charting.layout.splitSeries.allowIndependentYRanges">1</option>
+        <option name="refresh.display">progressbar</option>
+      </chart>
+    </panel>
+  </row>
+  <row>
+    <panel>
+      <table>
+        <search base="common">
+          <query>|sort - report_time, prediction |table id, alert_name, report_time, threat_level, status |rename status as "investigation status", threat_level as  "Salem threat prediction"</query>
+        </search>
+        <option name="refresh.display">progressbar</option>
+      </table>
+    </panel>
+  </row>
+</form>
