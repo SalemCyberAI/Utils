@@ -23,7 +23,7 @@ To implement the logic app we will use an Azure Resource Manager (ARM) template 
 
 Select the below link to deploy this Defender to Salem integration in Azure
 
-[Deploy to Azure](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FSalemCyberAI%2FUtils%2FMS%2520Defender%2FARM%2FmainTemplate.json)
+[Deploy to Azure](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FSalemCyberAI%2FUtils%2Fmain%2FMS%2520Defender%2FARM%2FmainTemplate.json)
 
 ### Update Event Hub network settings
 
