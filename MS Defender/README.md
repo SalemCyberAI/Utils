@@ -43,7 +43,7 @@ If you want to use vNet integration or private endpoints to communicate between 
     * Select 'Security alert' in the Defender for Cloud data type dropdown
     * Select the subscription and logic app created above.  The Logic App name was by default 'Defender_to_Salem'.
 
-3. Test the new integration by triggering the automated response for a security alert. From the Security alert page: select an alert > take action > Trigger automated response > select 'Defender_to_Salem' > Trigger .  You should be able the see if the automation was successful by selecting 'Defender_to_Salem' and reviewing the run status.
+3. Test the new integration by triggering the automated response for a security alert. From the Security alert page: select an alert > take action > Trigger automated response > select 'Defender_to_Salem' > Trigger.  You should be able the see if the automation was successful by selecting 'Defender_to_Salem' and reviewing the run status.
 
 ### Only for MS Defender ATP: Authorize the API connection
 
