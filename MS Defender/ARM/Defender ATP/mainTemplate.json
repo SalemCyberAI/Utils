@@ -65,8 +65,25 @@
                         }
                     },
                     "actions": {
-                        "Initialize_variable": {
+                        "Alerts_-_Get_single_alert": {
+                            "inputs": {
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['wdatp']['connectionId']"
+                                    }
+                                },
+                                "method": "get",
+                                "path": "/api/alerts/@{encodeURIComponent(triggerBody()?['id'])}"
+                            },
                             "runAfter": {},
+                            "type": "ApiConnection"
+                        },
+                        "Initialize_variable": {
+                            "runAfter": {
+                                "Alerts_-_Get_single_alert": [
+                                    "Succeeded"
+                                ]
+                            },
                             "type": "InitializeVariable",
                             "inputs": {
                                 "variables": [
@@ -74,7 +91,8 @@
                                         "name": "alert_formatted",
                                         "type": "object",
                                         "value": {
-                                            "alert": "@triggerBody()",
+                                            "alert": "@body('Alerts_-_Get_single_alert')",
+                                            "alert_name": "@body('Alerts_-_Get_single_alert')?['title']",
                                             "id": "@triggerBody()?['id']",
                                             "source": "defender ATP"
                                         }
