@@ -60,26 +60,72 @@
                             }
                         }
                     },
-                    "actions": { 
-                        "Initialize_variable": {
+                    "actions": {
+                        "Alert_-_Get_incident": {
+                            "runAfter": {},
+                            "type": "ApiConnection",
+                            "inputs": {
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['azuresentinel']['connectionId']"
+                                    }
+                                },
+                                "method": "get",
+                                "path": "/Incidents/subscriptions/@{encodeURIComponent(triggerBody()?['WorkspaceSubscriptionId'])}/resourceGroups/@{encodeURIComponent(triggerBody()?['WorkspaceResourceGroup'])}/workspaces/@{encodeURIComponent(triggerBody()?['WorkspaceId'])}/alerts/@{encodeURIComponent(triggerBody()?['SystemAlertId'])}"
+                            }
+                        },
+                        "Initialize_variable_alert_body": {
+                            "runAfter": {
+                                "Alert_-_Get_incident": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "alert_body",
+                                        "type": "object",
+                                        "value": {
+                                            "custom_details": "@json(triggerBody()?['ExtendedProperties']['Custom Details'])",
+                                            "earliest": "@triggerBody()['ExtendedProperties']['Query Start Time UTC']",
+                                            "entities": "@triggerBody()?['Entities']",
+                                            "incident_id": "@body('Alert_-_Get_incident')?['properties']?['incidentNumber']",
+                                            "latest": "@triggerBody()['ExtendedProperties']['Query End Time UTC']"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        "Initialize_variable_alert": {
+                            "runAfter": {
+                                "Initialize_variable_alert_body": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "InitializeVariable",
                             "inputs": {
                                 "variables": [
                                     {
                                         "name": "alert_formatted",
                                         "type": "object",
                                         "value": {
-                                            "alert": "@triggerBody()?['ExtendedProperties']",
+                                            "alert": "@variables('alert_body')",
                                             "alert_name": "@triggerBody()?['AlertDisplayName']",
                                             "id": "@triggerBody()?['SystemAlertId']",
                                             "source": "sentinel"
                                         }
                                     }
                                 ]
-                            },
-                            "runAfter": {},
-                            "type": "InitializeVariable"
+                            }
                         },
                         "Send_event": {
+                            "runAfter": {
+                                "Initialize_variable_alert": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "ApiConnection",
                             "inputs": {
                                 "body": {
                                     "ContentData": "@{base64(variables('alert_formatted'))}"
@@ -91,13 +137,7 @@
                                 },
                                 "method": "post",
                                 "path": "/@{encodeURIComponent('alerts')}/events"
-                            },
-                            "runAfter": {
-                                "Initialize_variable": [
-                                    "Succeeded"
-                                ]
-                            },
-                            "type": "ApiConnection"
+                            }
                         }
                     },
                     "outputs": {}
