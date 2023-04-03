@@ -87,7 +87,7 @@
                                         "name": "alert_body",
                                         "type": "object",
                                         "value": {
-                                            "custom_details": "@json(triggerBody()?['ExtendedProperties']['Custom Details'])",
+                                            "custom_details": "@json(coalesce(triggerBody()?['ExtendedProperties']?['Custom Details'],'{}'))",
                                             "earliest": "@triggerBody()['ExtendedProperties']['Query Start Time UTC']",
                                             "entities": "@triggerBody()?['Entities']",
                                             "incident_id": "@body('Alert_-_Get_incident')?['properties']?['incidentNumber']",
