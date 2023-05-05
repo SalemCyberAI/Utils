@@ -24,8 +24,8 @@
     },
     "variables": {
         "location": "[if(empty(parameters('location')), resourceGroup().location, parameters('location'))]",
-        "SalemEventHubConnectionName": "[concat('SalemEventHub-', parameters('PlaybookName'))]",
-        "SentinelConnectionName": "[concat('MicrosoftSentinel-', parameters('PlaybookName'))]"
+        "SalemEventHubConnectionName": "Salem-EventHub",
+        "SentinelConnectionName": "Salem-MicrosoftSentinel"
     },
     "resources": [
         {

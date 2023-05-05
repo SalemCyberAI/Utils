@@ -24,8 +24,8 @@
     },
     "variables": {
         "location": "[if(empty(parameters('location')), resourceGroup().location, parameters('location'))]",
-        "SalemEventHubConnectionName": "[concat('SalemEventHub-', parameters('PlaybookName'))]",
-        "DefenderConnectionName": "[concat('DefenderATP-', parameters('PlaybookName'))]"
+        "SalemEventHubConnectionName": "Salem-EventHub",
+        "DefenderConnectionName": "Salem-DefenderATP"
     },
     "resources": [
         {
