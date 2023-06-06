@@ -14,8 +14,8 @@ To implement the logic app we will use an Azure Resource Manager (ARM) template 
 
 ## What you'll need
 
-* It may go without saying, but you need an Azure subscription, be a user of Microsoft defender (Cloud or ATP) and have an active Salem (Salem Cyber) implementation.  You'll also need sufficient permissions to deploy new Azure resources, configure Microsoft Defender workflow automation and access Salem resources.
-* The connection string from the 'alerts' EventHub namespace in the Salem EventHub.  You can find this key in the azure portal for the event hub resource in the Salem managed resource group.  The key will already exist, however, you can generate a new key if you wish.  If you do create a new key, ensure the key has 'send' permissions.
+* It may go without saying, but you need an Azure subscription, be a user of Microsoft Defender (Cloud or ATP) and have an active Salem (Salem Cyber) implementation.  You'll also need sufficient permissions to deploy new Azure resources, configure Microsoft Defender workflow automation and access Salem resources.
+* The connection string from the 'alerts' EventHub namespace in the Salem EventHub.  You can find this key in the Azure portal for the event hub resource in the Salem managed resource group.  The key will already exist, however, you can generate a new key if you wish.  If you do create a new key, ensure the key has 'send' permissions.
 
 ## Getting Started
 
@@ -27,6 +27,7 @@ Select the below link to deploy this Defender to Salem integration in Azure
  --- | --- |
 | Defender for Cloud | [Deploy to Azure](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FSalemCyberAI%2FUtils%2Fmain%2FMS%2520Defender%2FARM%2FDefender%2520for%2520Cloud%2FmainTemplate.json) |
 | Defender ATP (endpoint) | [Deploy to Azure](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FSalemCyberAI%2FUtils%2Fmain%2FMS%2520Defender%2FARM%2FDefender%2520ATP%2FmainTemplate.json) |
+| Defender ATP alternative integration | [Deploy to Azure](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FSalemCyberAI%2FUtils%2Fmain%2FMS%2520Defender%2FARM%2FDefender%2520ATP%2520Alert%2520Polling%2FmainTemplate.json) |
 
 ### Update Event Hub network settings
 
@@ -49,7 +50,7 @@ If you want to use vNet integration or private endpoints to communicate between 
 
 When deploying the 'defender ATP to Salem' connection, a new API connection resource was created and needs to be authorized.
 
-1. Find the API connection created by deploying the Defender APT integration.  The API connection will be prefixed by 'DefenderATP-'
+1. Find the API connection, named "Salem-DefenderATP", created by deploying the Defender APT integration.
 
 2. From the API connection resource, select Edit API connection and then select 'authorize'
 
