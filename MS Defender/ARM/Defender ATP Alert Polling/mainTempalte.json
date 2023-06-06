@@ -1,0 +1,246 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "PlaybookName": {
+            "type": "string",
+            "metadata": {
+                "description": "A Globally unique name for the integration logic app"
+            }
+        },
+        "SalemEventHubConnectionString": {
+            "type": "securestring",
+            "metadata": {
+                "description": "The Connection String from the Salem 'alerts' Event Hub"
+            }
+        },
+        "location": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "Location for all resources.  Leave blank to use location of resource group"
+            }
+        }
+    },
+    "variables": {
+        "location": "[if(empty(parameters('location')), resourceGroup().location, parameters('location'))]",
+        "SalemEventHubConnectionName": "Salem-EventHub",
+        "DefenderConnectionName": "Salem-DefenderATP"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Logic/workflows",
+            "apiVersion": "2017-07-01",
+            "name": "[parameters('PlaybookName')]",
+            "location": "[variables('location')]",
+            "properties": {
+                "state": "Enabled",
+                "definition": {
+                    "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+                    "contentVersion": "1.0.0.0",
+                    "parameters": {
+                        "$connections": {
+                            "defaultValue": {},
+                            "type": "Object"
+                        }
+                    },
+                    "triggers": {
+                        "Sliding_Window": {
+                            "evaluatedRecurrence": {
+                                "frequency": "Minute",
+                                "interval": 5
+                            },
+                            "recurrence": {
+                                "frequency": "Minute",
+                                "interval": 5
+                            },
+                            "type": "SlidingWindow"
+                        }
+                    },
+                    "actions": {
+                        "Alerts_-_Get_list_of_alerts": {
+                            "inputs": {
+                                "host": {
+                                    "connection": {
+                                        "name": "@parameters('$connections')['wdatp']['connectionId']"
+                                    }
+                                },
+                                "method": "get",
+                                "path": "/api/alerts",
+                                "queries": {
+                                    "$count": true,
+                                    "$expand": "evidence",
+                                    "$filter": "alertCreationTime ge @{triggerOutputs()?['windowStartTime']} and alertCreationTime lt @{triggerOutputs()?['windowEndTime']}"
+                                }
+                            },
+                            "runAfter": {
+                                "Initialize_alert_formatted": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "ApiConnection"
+                        },
+                        "Condition": {
+                            "actions": {
+                                "For_each": {
+                                    "actions": {
+                                        "Machines_-_Get_single_machine": {
+                                            "inputs": {
+                                                "host": {
+                                                    "connection": {
+                                                        "name": "@parameters('$connections')['wdatp']['connectionId']"
+                                                    }
+                                                },
+                                                "method": "get",
+                                                "path": "/api/machines/@{encodeURIComponent('')}"
+                                            },
+                                            "runAfter": {},
+                                            "type": "ApiConnection"
+                                        },
+                                        "Send_ATP_event": {
+                                            "inputs": {
+                                                "body": {
+                                                    "ContentData": "@{base64(variables('alert_formatted'))}"
+                                                },
+                                                "host": {
+                                                    "connection": {
+                                                        "name": "@parameters('$connections')['eventhubs']['connectionId']"
+                                                    }
+                                                },
+                                                "method": "post",
+                                                "path": "/@{encodeURIComponent('alerts')}/events"
+                                            },
+                                            "runAfter": {
+                                                "Set_ATP_alert_formatted": [
+                                                    "Succeeded"
+                                                ]
+                                            },
+                                            "type": "ApiConnection"
+                                        },
+                                        "Set_ATP_alert_formatted": {
+                                            "inputs": {
+                                                "name": "alert_formatted",
+                                                "value": {
+                                                    "alert": "@addProperty(items('For_each'),'machine',body('Machines_-_Get_single_machine'))",
+                                                    "alert_name": "@items('For_each')?['title']",
+                                                    "id": "@items('For_each')?['id']",
+                                                    "source": "defender ATP"
+                                                }
+                                            },
+                                            "runAfter": {
+                                                "Machines_-_Get_single_machine": [
+                                                    "Succeeded"
+                                                ]
+                                            },
+                                            "type": "SetVariable"
+                                        }
+                                    },
+                                    "foreach": "@body('Alerts_-_Get_list_of_alerts')?['value']",
+                                    "runAfter": {},
+                                    "type": "Foreach"
+                                }
+                            },
+                            "else": {
+                                "actions": {
+                                    "Terminate": {
+                                        "inputs": {
+                                            "runStatus": "Succeeded"
+                                        },
+                                        "runAfter": {},
+                                        "type": "Terminate"
+                                    }
+                                }
+                            },
+                            "expression": {
+                                "and": [
+                                    {
+                                        "greater": [
+                                            "@body('Alerts_-_Get_list_of_alerts')?['@odata.count']",
+                                            0
+                                        ]
+                                    }
+                                ]
+                            },
+                            "runAfter": {
+                                "Alerts_-_Get_list_of_alerts": [
+                                    "Succeeded"
+                                ]
+                            },
+                            "type": "If"
+                        },
+                        "Initialize_alert_formatted": {
+                            "inputs": {
+                                "variables": [
+                                    {
+                                        "name": "alert_formatted",
+                                        "type": "object",
+                                        "value": {}
+                                    }
+                                ]
+                            },
+                            "runAfter": {},
+                            "type": "InitializeVariable"
+                        }
+                    }
+                },
+                "parameters": {
+                    "$connections": {
+                        "value": {
+                            "wdatp": {
+                                "connectionId": "[resourceId('Microsoft.Web/connections', variables('DefenderConnectionName'))]",
+                                "connectionName": "[variables('DefenderConnectionName')]",
+                                "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', variables('location'), '/managedApis/wdatp')]"
+                            },
+                            "eventhubs": {
+                                "connectionId": "[resourceId('Microsoft.Web/connections', variables('SalemEventHubConnectionname'))]",
+                                "connectionName": "[variables('SalemEventHubConnectionname')]",
+                                "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', variables('location'), '/managedApis/eventhubs')]"
+                            }
+                        }
+                    }
+                }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/connections', variables('DefenderConnectionName'))]",
+                "[resourceId('Microsoft.Web/connections', variables('SalemEventHubConnectionname'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Web/connections",
+            "apiVersion": "2016-06-01",
+            "name": "[variables('SalemEventHubConnectionname')]",
+            "location": "[variables('location')]",
+            "kind": "V1",
+            "properties": {
+                "displayName": "Salem Event Hubs",
+                "api": {
+                    "name": "[variables('SalemEventHubConnectionname')]",
+                    "displayName": "Salem Event Hubs",
+                    "description": "Connect to The Salem Event Hub to send alerts.",
+                    "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', variables('location'), '/managedApis/eventhubs')]",
+                    "type": "Microsoft.Web/locations/managedApis"
+                },
+                "parameterValues": {
+                    "connectionString": "[parameters('SalemEventHubConnectionString')]"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Web/connections",
+            "apiVersion": "2016-06-01",
+            "name": "[variables('DefenderConnectionName')]",
+            "location": "[variables('location')]",
+            "kind": "V1",
+            "properties": {
+                "displayName": "Microsoft Defender ATP",
+                "api": {
+                    "name": "[variables('DefenderConnectionName')]",
+                    "displayName": "Microsoft Defender ATP",
+                    "description": "[concat('Microsoft Defender ATP is a unified platform for preventative protection, post-breach detection, automated investigation, and response. Read more about it here: http://aka.ms/wdatp')]",
+                    "id": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Web/locations/', variables('location'), '/managedApis/wdatp')]",
+                    "type": "Microsoft.Web/locations/managedApis"
+                }
+            }
+        }
+    ]
+}
