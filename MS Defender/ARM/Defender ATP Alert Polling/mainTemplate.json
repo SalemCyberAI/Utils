@@ -50,6 +50,9 @@
                                 "frequency": "Minute",
                                 "interval": 5
                             },
+                            "inputs": {
+                                "delay": "PT20S"
+                            },
                             "recurrence": {
                                 "frequency": "Minute",
                                 "interval": 5
@@ -92,7 +95,7 @@
                                                     }
                                                 },
                                                 "method": "get",
-                                                "path": "/api/machines/@{encodeURIComponent('')}"
+                                                "path": "/api/machines/@{encodeURIComponent(items('For_each')?['machineId'])}"
                                             },
                                             "runAfter": {},
                                             "type": "ApiConnection"
