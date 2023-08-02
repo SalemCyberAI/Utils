@@ -16,7 +16,6 @@ def run():
 
     print(f"Preparing to migrate tables {tables_to_migrate}")
 
-    # migrating alertFilter TODO
     for table in tables_to_migrate:
         copy_table(table, configs)
 
