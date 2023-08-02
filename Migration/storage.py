@@ -55,9 +55,10 @@ def copy_table(table_name, configs):
         dest_table_client.create_table()
     except ResourceExistsError:
         print(f"{table_name} table already exists")
-    except ResourceExistsError as e:
+    except Exception as e:
         print(f"Error occurred while creating table {table_name}")
         print(str(e))
+        return
 
     # prepare batches grouped by PartitionKey
     batches = {}

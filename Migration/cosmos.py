@@ -89,7 +89,6 @@ def get_container(database, container_name, partition_key):
         return database.create_container(id=container_name, partition_key=PartitionKey(path=partition_key))
     except exceptions.CosmosResourceExistsError:
         return database.get_container_client(container_name)
-    return
 
 
 def list_containers(database_client):
