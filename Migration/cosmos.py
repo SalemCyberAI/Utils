@@ -3,6 +3,7 @@ import yaml
 
 
 def run():
+    # Edit this dict to turn on/off migration tables
     databases = {
         "Conf": [
             {
@@ -15,11 +16,11 @@ def run():
                 "dest_name": "ActionDefinition",
                 "partition_key": "/id"
             },
-            {
-                "source_name": "EntityConf",
-                "dest_name": "EntityConf",
-                "partition_key": "/id"
-            },
+            # {
+            #     "source_name": "EntityConf",
+            #     "dest_name": "EntityConf",
+            #     "partition_key": "/id"
+            # },
             {
                 "source_name": "ParsingConf",
                 "dest_name": "ParsingConf",
@@ -31,18 +32,18 @@ def run():
                 "partition_key": "/id"
             }
         ],
-        "Salem": [
-            {
-                "source_name": "Alerts",
-                "dest_name": "Alerts",
-                "partition_key": "/date"
-            },
-            {
-                "source_name": "Questions",
-                "dest_name": "Questions",
-                "partition_key": "/type"
-            },
-        ]
+        # "Salem": [
+        #     {
+        #         "source_name": "Alerts",
+        #         "dest_name": "Alerts",
+        #         "partition_key": "/date"
+        #     },
+        #     {
+        #         "source_name": "Questions",
+        #         "dest_name": "Questions",
+        #         "partition_key": "/type"
+        #     },
+        # ]
     }
 
     configs = load_configs()

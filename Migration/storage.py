@@ -5,7 +5,9 @@ import yaml
 
 def run():
     configs = load_configs()
-    salem_tables = ["alertFilter", "defaultContextLookup"]     # TODO only these tables will be migrated
+
+    # Add tables that need to be migrated
+    salem_tables = ["alertFilter", "defaultContextLookup", "defaultParsingLookup"]
 
     # fetch list of tables from the source
     source_client = table_service_client(configs["source_AzureWebJobsStorage"])
