@@ -51,7 +51,7 @@ def copy_table(table_name, configs):
     source_table_client = table_client(configs["source_AzureWebJobsStorage"], table_name)
     source_entities = source_table_client.list_entities()
 
-    dest_table_client = table_client(configs["source_AzureWebJobsStorage"], dest_table_name)
+    dest_table_client = table_client(configs["dest_AzureWebJobsStorage"], dest_table_name)
     try:
         dest_table_client.create_table()
     except ResourceExistsError:
