@@ -1,0 +1,7 @@
+#source and destination connection strings for Azure Storage Tables
+source_AzureWebJobsStorage: "<<connection string here>>"
+dest_AzureWebJobsStorage: "<<connection string here>>"
+
+#source and destination connection string for Cosmos DB
+source_CosmosConnection: "<<connection string here>>"
+dest_CosmosConnection: "<<connection string here>>"
