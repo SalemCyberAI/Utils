@@ -11,7 +11,6 @@ from urllib.parse import quote, quote_plus
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "lib"))
 import splunklib.client as client
-from splunklib.binding import ResponseReader
 from splunklib.searchcommands import dispatch, StreamingCommand, Configuration, Option, validators
 
 BATCH_SIZE = 10
