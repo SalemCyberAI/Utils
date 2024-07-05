@@ -7,7 +7,7 @@ import hashlib
 import base64
 import requests
 import re
-from urllib.parse import quote, quote_plus
+from urllib.parse import quote, quote_plus, urlparse
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "lib"))
 import splunklib.client as client
@@ -72,6 +72,9 @@ class salemCommand(StreamingCommand):
             connection['Endpoint'] = conf['endpoint']
         else:
             connection['Endpoint'] = 'https' + connection['Endpoint'][2:]
+
+        if not self.is_https(connection['Endpoint']):
+            raise ValueError('Salem Event Hub URL must use https protocol')
 
         token = self.get_auth_token(
             connection['Endpoint'],
@@ -140,6 +143,17 @@ class salemCommand(StreamingCommand):
         )
         if res.status_code != 201:
             raise Exception(f'Salem Event Hub ({url}) responded with status code: {res.status_code}, msg: {res.text}')
+
+    def is_https(self, url):
+        """Checks if the given URL uses HTTPS protocol.
+        Args:
+            url: The URL string to validate.
+
+        Returns:
+            True if the URL uses HTTPS, False otherwise.
+        """
+        parsed_url = urlparse(url)
+        return parsed_url.scheme == "https"
 
 
 dispatch(salemCommand, sys.argv, sys.stdin, sys.stdout, __name__)
