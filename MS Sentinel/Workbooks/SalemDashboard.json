@@ -228,7 +228,7 @@
               "type": 3,
               "content": {
                 "version": "KqlItem/1.0",
-                "query": "SalemAlerts_CL \n| extend pred = parse_json(prediction_s)[-1]\n| extend investigation_status = case(incident_s == \"1\", \"Threat\", incident_s == \"0\", \"False Positive\", \"Not Escalated\")\n| where investigation_status == \"Threat\"\n| extend context = parse_json(context_s)\n| mv-expand context.account\n| where isnotempty( context_account) \n| summarize cnt = count() by tostring(context_account)\n| order by cnt desc \n| take 5\n| project Targeted_Accounts = context_account, Count = cnt",
+                "query": "SalemAlerts_CL \n| extend pred = parse_json(prediction_s)[-1]\n| extend investigation_status = case(incident_s == \"1\", \"Threat\", incident_s == \"0\", \"False Positive\", \"Not Escalated\")\n| where investigation_status == \"Threat\"\n| extend context = parse_json(replace(\"'\", \"\\\"\", context_s))\n| mv-expand context.account\n| where isnotempty( context_account) \n| summarize cnt = count() by tostring(context_account)\n| order by cnt desc \n| take 5\n| project Targeted_Accounts = context_account, Count = cnt",
                 "size": 3,
                 "timeContextFromParameter": "time_range_picker",
                 "queryType": 0,
@@ -242,7 +242,7 @@
               "type": 3,
               "content": {
                 "version": "KqlItem/1.0",
-                "query": "SalemAlerts_CL\n| where incident_s == \"1\"\n| extend context = parse_json(context_s)\n| extend res_context = case(set_has_element(context.dest, \"external_resource\"), context.src, context.dest)\n| mv-expand res_context\n| where res_context !in (\"internal_resource\",\"isHostName\")\n| where isnotempty(res_context)\n| summarize Count = count() by tostring(res_context)\n| order by Count desc\n| project Targeted_Resources = res_context, Count\n| take {row_count}",
+                "query": "SalemAlerts_CL\n| where incident_s == \"1\"\n| extend context = parse_json(replace(\"'\", \"\\\"\", context_s))\n| extend res_context = case(set_has_element(context.dest, \"external_resource\"), context.src, context.dest)\n| mv-expand res_context\n| where res_context !in (\"internal_resource\",\"isHostName\")\n| where isnotempty(res_context)\n| summarize Count = count() by tostring(res_context)\n| order by Count desc\n| project Targeted_Resources = res_context, Count\n| take {row_count}",
                 "size": 3,
                 "timeContextFromParameter": "time_range_picker",
                 "queryType": 0,
