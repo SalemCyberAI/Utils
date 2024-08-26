@@ -1,0 +1,43 @@
+<form class="'form-horizontal form-complex">
+    <div class="control-group">
+        <label class="control-label" for="alert_name">Alert Name</label>
+
+        <div class="controls">
+            <input type="text" name="action.salem_alert_action.param.alert_name" id="alert_name" />
+            <span class="help-block">Alert title, rule name, or other descriptive name.</span>
+        </div>
+    </div>
+    <br clear="both" />
+    <div class="control-group">
+        <label class="control-label" for="alert_id">Alert ID</label>
+
+        <div class="controls">
+            <input type="text" name="action.salem_alert_action.param.alert_id" id="alert_id" />
+            <span class="help-block">Unique alert id.  Can come from a field such as: '$alert_id$', or leave blank to have Salem assign a new id.</span>
+        </div>
+    </div>
+    <br clear="both" />
+    <div class="control-group">
+        <label class="control-label" for="alert_source">Alert Source</label>
+
+        <div class="controls">
+            <input type="text" name="action.salem_alert_action.param.alert_source" id="alert_source" />
+            <span class="help-block">Defaults to 'Splunk'</span>
+        </div>
+    </div>
+    <br clear="both" />
+    <div class="control-group">
+        <label class="control-label" for="aggregate">Group events into a single alert?</label>
+
+        <div class="controls">
+            <label class="radio" for="aggregate_false">
+                <input type="radio" id="aggregate_false" name="action.salem_alert_action.param.aggregate" value="event" />
+                Event
+            </label>
+            <label class="radio" for="aggregate_true">
+                <input type="radio" id="aggregate_true" name="action.salem_alert_action.param.aggregate" value="aggregate" />
+                Aggregate
+            </label>
+            <span class="help-block">Event will create a new Salem alert for each returned event, while Aggregate will create only a single alert</span>
+    </div>
+</form>
