@@ -88,9 +88,10 @@ class salemCommand(StreamingCommand):
             msg = {
                 "source": self.source,
                 "alert_name": alert.get(self.alert_name_field),
-                "id": alert.get(self.alert_id_field),
                 "alert": alert
             }
+            if alert.get(self.alert_id_field):
+                msg['id'] = alert.get(self.alert_id_field)
             batch.append({'body': json.dumps(msg)})
             if len(batch) >= BATCH_SIZE:
                 # EventDataBatch object reaches max_size.
