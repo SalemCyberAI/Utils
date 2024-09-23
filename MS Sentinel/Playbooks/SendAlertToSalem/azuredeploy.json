@@ -90,8 +90,12 @@
                                             "custom_details": "@json(coalesce(triggerBody()?['ExtendedProperties']?['Custom Details'],'{}'))",
                                             "earliest": "@triggerBody()['ExtendedProperties']['Query Start Time UTC']",
                                             "entities": "@triggerBody()?['Entities']",
-                                            "incident_id": "@body('Alert_-_Get_incident')?['properties']?['incidentNumber']",
-                                            "latest": "@triggerBody()['ExtendedProperties']['Query End Time UTC']"
+                                            "incident_id": "@body('Alert_-_Get_incident')?['name']",
+                                            "incident_number": "@body('Alert_-_Get_incident')?['properties']?['incidentNumber']",
+                                            "incident_severity": "@body('Alert_-_Get_incident')?['properties']?['severity']",
+                                            "incident_title": "@body('Alert_-_Get_incident')?['properties']?['title']",
+                                            "latest": "@triggerBody()['ExtendedProperties']['Query End Time UTC']",
+                                            "sentinel_query": "@triggerBody()?['ExtendedProperties']['Query']"
                                         }
                                     }
                                 ]
