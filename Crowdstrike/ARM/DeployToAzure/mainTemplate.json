@@ -119,7 +119,7 @@
                                     }
                                 },
                                 "method": "get",
-                                "path": "[concat('/secrets/@{encodeURIComponent(', parameters('CS_SECRET_NAME') ,')}/value')]"
+                                "path": "/secrets/@{encodeURIComponent(parameters('cs_secret_name'))}/value"
                             },
                             "runAfter": {},
                             "type": "ApiConnection"
@@ -295,6 +295,10 @@
                         "client_id": {
                             "defaultValue": "",
                             "type": "SecureString"
+                        },
+                        "cs_secret_name": {
+                            "defaultValue": "",
+                            "type": "SecureString"
                         }
                     },
                     "triggers": {
@@ -336,6 +340,9 @@
                     },
                     "client_id": {
                         "value": "[parameters('CS_CID')]"
+                    },
+                    "cs_secret_name": {
+                        "value": "[parameters('CS_SECRET_NAME')]"
                     }
                 }
             },
