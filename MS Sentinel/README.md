@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-* Permissions: you must have the Azure RBAC role "Microsoft Sentinel Automation Contributor", in the resource group you are deploying this integration to in order to use these playbooks within Azure Sentinel
+* Permissions: you must have the Azure RBAC role "Logic App Contributor", in the resource group you are deploying this integration to in order to use these playbooks within Microsoft Sentinel.  Additionally, you will need the role "Microsoft Sentinel Automation Contributor" asigned to yourself, the SPN or the managed identity you plan to use to authorize the Logic App.  See Authorization below.
 
 ## Integration for native Sentinel Alerts
 
@@ -15,7 +15,9 @@ Integration includes:
 
 ### Deploy Playbook
 
-The below link will deploy a new Azure logic app configured to send Sentinel alerts to Salem for analysis
+The below link will deploy a new Azure logic app configured to send Sentinel alerts to Salem for analysis.  
+
+Note: For best results, deploy this integration into the same Azure resource gorup you use for Microsoft Sentinel.  If you choose a different resource group, additional configuratoins will need to be updated in Sentinel to enable Sentinel to access playbooks in this second resource group.
 
 [Deploy to Azure](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FSalemCyberAI%2FUtils%2Fmain%2FMS%2520Sentinel%2FPlaybooks%2FSendAlertToSalem%2Fazuredeploy\.json)
 
