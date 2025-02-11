@@ -1,0 +1,62 @@
+display_information:
+  name: Salem Cyber Analyst
+  description: Salem AI cybersecurity analyst
+  background_color: "#103350"
+  long_description: Salem is an AI powered cyber analyst designed to scale your cyber operations teams, allowing your organization to investigate a wider set of cyber threats than what's possible with a human only SOC.
+features:
+  app_home:
+    home_tab_enabled: false
+    messages_tab_enabled: true
+    messages_tab_read_only_enabled: false
+  bot_user:
+    display_name: Salem Cyber Analyst
+    always_online: false
+oauth_config:
+  redirect_urls:
+    - https://slack.botframework.com
+    - https://token.botframework.com/.auth/web/redirect
+  scopes:
+    user:
+      - identity.email
+      - identity.basic
+    bot:
+      - channels:history
+      - channels:read
+      - chat:write
+      - dnd:read
+      - emoji:read
+      - files:read
+      - files:write
+      - groups:history
+      - groups:read
+      - im:history
+      - im:read
+      - im:write
+      - mpim:history
+      - mpim:read
+      - pins:read
+      - pins:write
+      - reactions:read
+      - reactions:write
+      - team:read
+      - usergroups:read
+      - users:read
+      - users:read.email
+      - users:write
+      - mpim:write
+settings:
+  event_subscriptions:
+    request_url: https://slack.botframework.com/api/Events/<YOUR-SALEM-BOT-NAME>[Change Me]
+    bot_events:
+      - member_joined_channel
+      - member_left_channel
+      - message.channels
+      - message.groups
+      - message.im
+      - message.mpim
+  interactivity:
+    is_enabled: true
+    request_url: https://<YOUR-SALEM-BOT-NAME>.azurewebsites.net/api/slack/interactions[Change Me]
+  org_deploy_enabled: false
+  socket_mode_enabled: false
+  token_rotation_enabled: false
